@@ -77,7 +77,7 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                       canBeDismissedByUser:YES];
+                      canBeDismissedByUser:YES];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -85,7 +85,7 @@ __weak static UIViewController *_defaultViewController;
                                 subtitle:(NSString *)subtitle
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
-                     canBeDismissedByUser:(BOOL)dismissingEnabled
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
 {
     [self showNotificationInViewController:viewController
                                      title:title
@@ -97,7 +97,7 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                       canBeDismissedByUser:dismissingEnabled];
+                      canBeDismissedByUser:dismissingEnabled];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -209,7 +209,16 @@ __weak static UIViewController *_defaultViewController;
         else
             currentNavigationController = (UINavigationController *)currentView.viewController.parentViewController;
         
-        BOOL isViewIsUnderStatusBar = [[[currentNavigationController childViewControllers] firstObject] wantsFullScreenLayout];
+        BOOL isViewIsUnderStatusBar;
+        if ([[[currentNavigationController childViewControllers] firstObject] respondsToSelector:@selector(edgesForExtendedLayout)]) {
+            isViewIsUnderStatusBar = [[currentNavigationController childViewControllers] firstObject].edgesForExtendedLayout == UIRectEdgeAll;
+        }
+        else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            isViewIsUnderStatusBar = [[[currentNavigationController childViewControllers] firstObject] wantsFullScreenLayout];
+#pragma clang diagnostic pop
+        }
         if (!isViewIsUnderStatusBar && currentNavigationController.parentViewController == nil) {
             isViewIsUnderStatusBar = ![TSMessage isNavigationBarInNavigationControllerHidden:currentNavigationController]; // strange but true
         }
@@ -254,10 +263,18 @@ __weak static UIViewController *_defaultViewController;
     else
     {
         CGFloat y = currentView.viewController.view.bounds.size.height - CGRectGetHeight(currentView.frame) / 2.0;
+        
+        if (!currentView.viewController.tabBarController.tabBar.hidden)
+        {
+            y -= CGRectGetHeight(currentView.viewController.tabBarController.tabBar.bounds);
+        
+        }
+        
         if (!currentView.viewController.navigationController.isToolbarHidden)
         {
             y -= CGRectGetHeight(currentView.viewController.navigationController.toolbar.bounds);
         }
+        
         toPoint = CGPointMake(currentView.center.x, y);
     }
     

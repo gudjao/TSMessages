@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Felix Krause. All rights reserved.
 //
 
+// Updated 6/17/16 v0.9.13.1
+
 #import <UIKit/UIKit.h>
 #import "TSMessage.h"
 
