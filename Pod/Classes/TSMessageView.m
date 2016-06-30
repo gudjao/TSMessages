@@ -248,8 +248,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             }
             [self.contentLabel setShadowColor:self.titleLabel.shadowColor];
             [self.contentLabel setShadowOffset:self.titleLabel.shadowOffset];
-            self.contentLabel.lineBreakMode = self.titleLabel.lineBreakMode;
-            self.contentLabel.numberOfLines = 0;
+            self.contentLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+            self.contentLabel.numberOfLines = [[current valueForKey:@"numberOfLines"] integerValue];
             
             [self addSubview:self.contentLabel];
         }
