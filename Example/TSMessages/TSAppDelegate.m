@@ -26,7 +26,6 @@
     [[TSMessageView appearance]setWarningIcon:[UIImage imageNamed:@"NotificationButtonBackground"]];
     //End of override
      */
-    
     return YES;
 }
 

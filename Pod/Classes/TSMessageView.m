@@ -269,18 +269,19 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         {
             _button = [UIButton buttonWithType:UIButtonTypeCustom];
             
+            NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+            UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"] inBundle:bundle compatibleWithTraitCollection:nil];
             
-            UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
-            
-            buttonBackgroundImage = [buttonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(15.0, 12.0, 15.0, 11.0)];
-            
-            if (!buttonBackgroundImage)
-            {
-                buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"NotificationButtonBackground"]];
+            if(buttonBackgroundImage) {
                 buttonBackgroundImage = [buttonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(15.0, 12.0, 15.0, 11.0)];
+                
+                [self.button setBackgroundImage:buttonBackgroundImage forState:UIControlStateNormal];
+            } else {
+                [[self.button layer] setBorderWidth:1.0f];
+                [[self.button layer] setBorderColor:[UIColor hx_colorWithHexRGBAString:[current valueForKey:@"buttonTitleTextColor"] alpha:1.0].CGColor];
+                [[self.button layer] setCornerRadius:4.0f];
             }
             
-            [self.button setBackgroundImage:buttonBackgroundImage forState:UIControlStateNormal];
             [self.button setTitle:self.buttonTitle forState:UIControlStateNormal];
             
             UIColor *buttonTitleShadowColor = [UIColor hx_colorWithHexRGBAString:[current valueForKey:@"buttonTitleShadowColor"] alpha:1.0];
@@ -305,7 +306,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                             action:@selector(buttonTapped:)
                   forControlEvents:UIControlEventTouchUpInside];
             
-            self.button.contentEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 0.0, 5.0);
+            self.button.contentEdgeInsets = UIEdgeInsetsMake(4.0, 10.0, 4.0, 10.0);
             [self.button sizeToFit];
             self.button.frame = CGRectMake(screenWidth - padding - self.button.frame.size.width,
                                            0.0,
