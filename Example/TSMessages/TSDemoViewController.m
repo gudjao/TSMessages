@@ -20,7 +20,7 @@
     [TSMessage setDefaultViewController:self];
     [TSMessage setDelegate:self];
     //self.wantsFullScreenLayout = YES;
-     [self setFullscreenLayout:YES];
+    [self setFullscreenLayout:YES];
     
     [self.navigationController.navigationBar setTranslucent:YES];
 }
@@ -98,6 +98,32 @@
                                  }
                                      atPosition:TSMessageNotificationPositionTop
                            canBeDismissedByUser:YES];
+    
+//    if([TSMessage isNotificationActive]) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSString *randomString = [self randomStringWithLength:4];
+//            _messageView.subtitle = randomString;
+//            _messageView.duration = 4.0f;
+//            [_messageView.contentLabel setText:randomString];
+//            [_messageView setNeedsLayout];
+//            [[TSMessage sharedMessage] resetNotificationCount:_messageView];
+//            NSLog(@"Reload: %@", _messageView.contentLabel.text);
+//        });
+//        return;
+//    }
+//    _messageView = [TSMessage showNotificationInViewController:self
+//                                                         title:@"Message from driver"
+//                                                      subtitle:[self randomStringWithLength:4]
+//                                                         image:nil
+//                                                          type:TSMessageNotificationTypeMessage
+//                                                      duration:4.0f
+//                                                      callback:nil
+//                                                   buttonTitle:@"Read"
+//                                                buttonCallback:^{
+//                                                    NSLog(@"Read Message");
+//                                                }
+//                                                    atPosition:TSMessageNotificationPositionTop
+//                                          canBeDismissedByUser:YES];
 }
 
 - (IBAction)didTapToggleNavigationBar:(id)sender
@@ -150,7 +176,7 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionTop
-                            canBeDismissedByUser:NO];
+                           canBeDismissedByUser:NO];
 }
 
 - (IBAction)didTapLong:(id)sender
@@ -180,7 +206,18 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionBottom
-                            canBeDismissedByUser:YES];
+                           canBeDismissedByUser:YES];
+}
+
+-(NSString *)randomStringWithLength:(int)len {
+    NSString *letters = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    NSMutableString *randomString = [NSMutableString stringWithCapacity: len];
+    
+    for (int i=0; i<len; i++) {
+        [randomString appendFormat: @"%C", [letters characterAtIndex:(rand() % [letters length])]];
+    }
+    
+    return randomString;
 }
 
 - (IBAction)didTapText:(id)sender
@@ -195,7 +232,7 @@
     // this is an example on how to apply a custom design
     [TSMessage addCustomDesignFromFileWithName:@"AlternativeDesign.json"];
     [TSMessage showNotificationWithTitle:NSLocalizedString(@"Updated to custom design file", nil)
-                                    subtitle:NSLocalizedString(@"From now on, all the titles of success messages are larger", nil)
+                                subtitle:NSLocalizedString(@"From now on, all the titles of success messages are larger", nil)
                                     type:TSMessageNotificationTypeSuccess];
 }
 

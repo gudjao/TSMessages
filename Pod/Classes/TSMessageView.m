@@ -23,12 +23,6 @@ static NSMutableDictionary *_notificationDesign;
 
 @interface TSMessageView () <UIGestureRecognizerDelegate>
 
-/** The displayed title of this message */
-@property (nonatomic, strong) NSString *title;
-
-/** The displayed subtitle of this message view */
-@property (nonatomic, strong) NSString *subtitle;
-
 /** The title of the added button */
 @property (nonatomic, strong) NSString *buttonTitle;
 
@@ -37,8 +31,6 @@ static NSMutableDictionary *_notificationDesign;
 
 
 /** Internal properties needed to resize the view on device rotation properly */
-@property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) UIImageView *iconImageView;
 @property (nonatomic, strong) UIButton *button;
 @property (nonatomic, strong) UIView *borderView;

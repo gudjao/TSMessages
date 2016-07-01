@@ -19,10 +19,14 @@
 @interface TSMessageView : UIView
 
 /** The displayed title of this message */
-@property (nonatomic, readonly) NSString *title;
+@property (nonatomic, strong) NSString *title;
 
-/** The displayed subtitle of this message */
-@property (nonatomic, readonly) NSString *subtitle;
+@property (nonatomic, strong) UILabel *titleLabel;
+
+/** The displayed subtitle of this message view */
+@property (nonatomic, strong) NSString *subtitle;
+
+@property (nonatomic, strong) UILabel *contentLabel;
 
 /** The view controller this message is displayed in */
 @property (nonatomic, readonly) UIViewController *viewController;

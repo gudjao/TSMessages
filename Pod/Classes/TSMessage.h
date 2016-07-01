@@ -63,7 +63,9 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
 };
 
 
-@interface TSMessage : NSObject
+@interface TSMessage : NSObject {
+    NSTimer *_fadeTimer;
+}
 
 /** By setting this delegate it's possible to set a custom offset for the notification view */
 @property (nonatomic, assign) id <TSMessageViewProtocol>delegate;
@@ -145,7 +147,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  @param messagePosition The position of the message on the screen
  @param dismissingEnabled Should the message be dismissed when the user taps/swipes it
  */
-+ (void)showNotificationInViewController:(UIViewController *)viewController
++ (TSMessageView *)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
                                    image:(UIImage *)image
@@ -199,5 +201,8 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  on the UINavigationController or isHidden on the navigationBar of the current 
  UINavigationController */
 + (BOOL)isNavigationBarInNavigationControllerHidden:(UINavigationController *)navController;
+
+/** Reset Count Timer */
+- (void)resetNotificationCount:(TSMessageView *)currentView;
 
 @end

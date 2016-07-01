@@ -119,17 +119,17 @@ __weak static UIViewController *_defaultViewController;
 }
 
 
-+ (void)showNotificationInViewController:(UIViewController *)viewController
-                                   title:(NSString *)title
-                                subtitle:(NSString *)subtitle
-                                   image:(UIImage *)image
-                                    type:(TSMessageNotificationType)type
-                                duration:(NSTimeInterval)duration
-                                callback:(void (^)())callback
-                             buttonTitle:(NSString *)buttonTitle
-                          buttonCallback:(void (^)())buttonCallback
-                              atPosition:(TSMessageNotificationPosition)messagePosition
-                    canBeDismissedByUser:(BOOL)dismissingEnabled
++ (TSMessageView *)showNotificationInViewController:(UIViewController *)viewController
+                                              title:(NSString *)title
+                                           subtitle:(NSString *)subtitle
+                                              image:(UIImage *)image
+                                               type:(TSMessageNotificationType)type
+                                           duration:(NSTimeInterval)duration
+                                           callback:(void (^)())callback
+                                        buttonTitle:(NSString *)buttonTitle
+                                     buttonCallback:(void (^)())buttonCallback
+                                         atPosition:(TSMessageNotificationPosition)messagePosition
+                               canBeDismissedByUser:(BOOL)dismissingEnabled
 {
     // Create the TSMessageView
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
@@ -144,6 +144,8 @@ __weak static UIViewController *_defaultViewController;
                                                  atPosition:messagePosition
                                        canBeDismissedByUser:dismissingEnabled];
     [self prepareNotificationToBeShown:v];
+    
+    return v;
 }
 
 
@@ -267,7 +269,7 @@ __weak static UIViewController *_defaultViewController;
         if (!currentView.viewController.tabBarController.tabBar.hidden)
         {
             y -= CGRectGetHeight(currentView.viewController.tabBarController.tabBar.bounds);
-        
+            
         }
         
         if (!currentView.viewController.navigationController.isToolbarHidden)
@@ -322,9 +324,14 @@ __weak static UIViewController *_defaultViewController;
     {
         dispatch_async(dispatch_get_main_queue(), ^
                        {
-                           [self performSelector:@selector(fadeOutNotification:)
-                                      withObject:currentView
-                                      afterDelay:currentView.duration];
+                           _fadeTimer = nil;
+                           if (!_fadeTimer) {
+                               _fadeTimer = [NSTimer scheduledTimerWithTimeInterval:currentView.duration
+                                                                             target:self
+                                                                           selector:@selector(fadeOutNotification:)
+                                                                           userInfo:currentView
+                                                                            repeats:YES];
+                           }
                        });
     }
 }
@@ -340,17 +347,36 @@ __weak static UIViewController *_defaultViewController;
     }
 }
 
-- (void)fadeOutNotification:(TSMessageView *)currentView
+- (void)resetNotificationCount:(TSMessageView *)currentView {
+    if ([_fadeTimer isValid]) {
+        [_fadeTimer invalidate];
+    }
+    _fadeTimer = nil;
+    _fadeTimer = [NSTimer scheduledTimerWithTimeInterval:currentView.duration
+                                                  target:self
+                                                selector:@selector(fadeOutNotification:)
+                                                userInfo:currentView
+                                                 repeats:YES];
+}
+
+- (void)fadeOutNotification:(id)sender
 {
+    TSMessageView *currentView;
+    if([sender isKindOfClass:[TSMessageView class]]) {
+        currentView = (TSMessageView *)sender;
+    } else if([sender isKindOfClass:[NSTimer class]]) {
+        currentView = (TSMessageView *)[sender userInfo];
+    }
     [self fadeOutNotification:currentView animationFinishedBlock:nil];
 }
 
 - (void)fadeOutNotification:(TSMessageView *)currentView animationFinishedBlock:(void (^)())animationFinished
 {
     currentView.messageIsFullyDisplayed = NO;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self
-                                             selector:@selector(fadeOutNotification:)
-                                               object:currentView];
+    if ([_fadeTimer isValid]) {
+        [_fadeTimer invalidate];
+    }
+    _fadeTimer = nil;
     
     CGPoint fadeOutToPoint;
     if (currentView.messagePosition != TSMessageNotificationPositionBottom)
