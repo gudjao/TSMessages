@@ -11,7 +11,7 @@
 #import "TSBlurView.h"
 #import "TSMessage.h"
 
-#define TSMessageViewMinimumPadding 18.0
+#define TSMessageViewMinimumPadding 19.0
 
 #define TSDesignFileName @"TSMessagesDefaultDesign"
 
