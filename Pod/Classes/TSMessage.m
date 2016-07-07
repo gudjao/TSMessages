@@ -137,7 +137,7 @@ __weak static UIViewController *_defaultViewController;
                                                       image:image
                                                        type:type
                                                    duration:duration
-                                           inViewController:viewController
+                                           inViewController:viewController ? viewController : [self defaultViewController]
                                                    callback:callback
                                                 buttonTitle:buttonTitle
                                              buttonCallback:buttonCallback
